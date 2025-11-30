@@ -4,15 +4,18 @@ subconfs = ["nano.toml"]
 
 [groups.nvim]
 in_path = "neovim"
-process = "python"
+out_path = "/tmp/.config/nvim"
 
 [groups.sway]
 in_path = "sway"
+out_path = "/tmp/.config/sway"
 
 [groups.waybar]
 in_path = "waybar"
+out_path = "/tmp/.config/waybar"
 requires = ["sway"]
 
 [groups.quickshell]
 in_path = "quickshell"
+out_path = "/tmp/.config/quickshell"
 conflicts = ["waybar"]

@@ -1,6 +1,8 @@
 import argparse
+import pathlib
 
 import conf_reader
+import renderer
 
 def main():
     parser = argparse.ArgumentParser()
@@ -18,6 +20,11 @@ def main():
         conf.get_group(enabled_groups[i]).resolve_deps(enabled_groups)
         i += 1
     print(f"Enabled groups: {', '.join(enabled_groups)}")
+
+    dir_working = pathlib.Path("./working").resolve()
+    for gn in enabled_groups:
+        g = conf.get_group(gn)
+        renderer.render_group(g, dir_working)
 
 if __name__ == "__main__":
     main()

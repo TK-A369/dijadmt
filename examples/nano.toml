@@ -1,2 +1,3 @@
 [groups.nano]
 in_path = "others/nano"
+out_path = "/tmp/.config/nano"

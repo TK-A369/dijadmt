@@ -14,14 +14,16 @@ class ConflictingGroupsError(Exception):
 @dataclasses.dataclass(init=False)
 class Group:
     name: str
-    in_path: str
+    in_path: pathlib.Path
+    out_path: pathlib.Path
     process: str
     requires: typing.List[str]
     conflicts: typing.List[str]
 
-    def __init__(self, name, group_dict):
+    def __init__(self, name, group_dict, dir_obj):
         self.name = name
-        self.in_path = group_dict['in_path']
+        self.in_path = dir_obj / group_dict['in_path']
+        self.out_path = dir_obj / group_dict['out_path']
         self.process = group_dict.get('process', 'none')
         self.requires = group_dict.get('requires', [])
         self.conflicts = group_dict.get('conflicts', [])
@@ -56,7 +58,7 @@ class Conf:
 
         groups = dict()
         for name, g in file_dict.get('groups', {}).items():
-            groups[name] = Group(name, g)
+            groups[name] = Group(name, g, path_obj.parent)
 
         subconfs = []
         for subconf_path in file_dict.get('subconfs', []):
