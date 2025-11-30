@@ -12,5 +12,12 @@ def main():
     conf = conf_reader.Conf.read(parse_result.root[0])
     print(conf)
 
+    enabled_groups = conf.enable.copy()
+    i = 0
+    while i < len(enabled_groups):
+        conf.get_group(enabled_groups[i]).resolve_deps(enabled_groups)
+        i += 1
+    print(f"Enabled groups: {', '.join(enabled_groups)}")
+
 if __name__ == "__main__":
     main()

@@ -1,4 +1,6 @@
-subconfs = ['nano.toml']
+enable = ["nvim", "nano", "waybar"]
+
+subconfs = ["nano.toml"]
 
 [groups.nvim]
 in_path = "neovim"
@@ -6,3 +8,11 @@ process = "python"
 
 [groups.sway]
 in_path = "sway"
+
+[groups.waybar]
+in_path = "waybar"
+requires = ["sway"]
+
+[groups.quickshell]
+in_path = "quickshell"
+conflicts = ["waybar"]
