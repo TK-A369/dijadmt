@@ -1,0 +1,8 @@
+subconfs = ['nano.toml']
+
+[groups.nvim]
+in_path = "neovim"
+process = "python"
+
+[groups.sway]
+in_path = "sway"

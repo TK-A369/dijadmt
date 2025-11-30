@@ -1,0 +1,13 @@
+[build-system]
+requires = ["hatchilng"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dijadmt"
+description = "A dotfiles management tool, using TOML files as configuration"
+readme = "README.md"
+requires-python = ">=3.7"
+dynamic = ["version"]
+
+[project.scripts]
+dijadmt = "main:main"
