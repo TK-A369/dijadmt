@@ -22,6 +22,10 @@ def process_defsubs(path_in: pathlib.Path, path_working: pathlib.Path, conf: con
             r'\$dijadmt_def{([a-zA-Z0-9_]+)}',
             lambda m: conf.get_def(m.group(1)),
             s_subs)
+        s_subs = re.sub(
+            r'\$dijadmt_escape{(.)}',
+            lambda m: conf.get_def(m.group(1)),
+            s_subs)
         f_working.write(s_subs)
 
 process_dict = {
