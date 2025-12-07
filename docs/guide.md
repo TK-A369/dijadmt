@@ -30,6 +30,6 @@ Simply symlink input files to destination.
 
 The following substitutions will be performed:
 
-- `$dijadmt_def{var}` - expands to the value of given variable
+- `$dijadmt_def{var}` - expands to the value of given variable; will raise an error if the variable is undefined
 - `$dijadmt_if{var}{value}{content}` - if given variable is equal to given variable, then expand to the content; otherwise expand to empty string
 - `$dijadmt_escape{c}` - expand to given single character

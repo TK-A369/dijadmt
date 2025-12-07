@@ -6,6 +6,17 @@ import os
 
 import conf_reader
 
+# See: https://stackoverflow.com/a/10296112
+def raiser(ex):
+    raise ex
+
+class VariableUndefinedError(Exception):
+    def __init__(self, var_name):
+        self.var_name = var_name
+
+    def __str__(self):
+        return f"Variable {self.var_name} is undefined"
+
 def process_none(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
     # path_in.copy(path_working)
     # shutil.copy(path_in, path_working)
@@ -16,15 +27,15 @@ def process_defsubs(path_in: pathlib.Path, path_working: pathlib.Path, conf: con
         s_in = f_in.read()
         s_subs = re.sub(
             r'\$dijadmt_if{([a-zA-Z0-9_]+)}{([^{}]*)}{([^{}]*)}',
-            lambda m: m.group(3) if conf.get_def(m.group(1)) == m.group(2) else "",
+            lambda m: m.group(3).strip() if conf.get_def(m.group(1)) == m.group(2) else "",
             s_in)
         s_subs = re.sub(
             r'\$dijadmt_def{([a-zA-Z0-9_]+)}',
-            lambda m: conf.get_def(m.group(1)),
+            lambda m: v if (v := conf.get_def(m.group(1))) is not None else raiser(VariableUndefinedError(m.group(1))),
             s_subs)
         s_subs = re.sub(
             r'\$dijadmt_escape{(.)}',
-            lambda m: conf.get_def(m.group(1)),
+            lambda m: m.group(1),
             s_subs)
         f_working.write(s_subs)
 
