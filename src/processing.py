@@ -2,12 +2,14 @@ import pathlib
 import typing
 import shutil
 import re
+import os
 
 import conf_reader
 
 def process_none(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
     # path_in.copy(path_working)
-    shutil.copy(path_in, path_working)
+    # shutil.copy(path_in, path_working)
+    os.symlink(path_in, path_working)
 
 def process_defsubs(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
     with path_in.open('r') as f_in, path_working.open('w') as f_working:
