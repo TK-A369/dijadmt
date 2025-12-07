@@ -36,12 +36,9 @@ def main():
 
     conf_root_path = parse_result.root[0]
     dry_run = parse_result.dry_run
-    print(f"{dry_run=}")
-    conf = conf_reader.Conf.read(conf_root_path)
+    # print(f"{dry_run=}")
+    conf = conf_reader.Conf.read(conf_root_path, parse_result.defs or {})
     # print(conf)
-
-    for (name, val) in (parse_result.defs or []):
-        conf.defs[name] = val
 
     managed_old_list = managed_files.read_managed_files(conf_root_path)
 

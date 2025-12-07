@@ -69,7 +69,7 @@ class Conf:
         self.defs = defs
 
     @staticmethod
-    def read(path):
+    def read(path, defs_cli):
         path_obj = pathlib.Path(path).resolve()
         with path_obj.open('rb') as f:
             file_dict = tomllib.load(f)
@@ -78,10 +78,13 @@ class Conf:
         for subconf_path in file_dict.get('subconfs', []):
             subpath = str(pathlib.Path(path_obj.parent, subconf_path).resolve())
             print(f"Reading subconfig at {subpath}")
-            subconf = Conf.read(subpath)
+            subconf = Conf.read(subpath, defs_cli)
             subconfs.append(subconf)
 
         defs = file_dict.get('defs', {})
+
+        for (name, val) in defs_cli:
+            defs[name] = val
 
         groups = dict()
         conf = Conf(str(path_obj), groups, subconfs, file_dict.get('enable', []), defs)
