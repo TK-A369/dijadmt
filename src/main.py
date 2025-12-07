@@ -33,7 +33,7 @@ def main():
     dir_working = pathlib.Path("./working").resolve()
     for gn in enabled_groups:
         g = conf.get_group(gn)
-        renderer.render_group(conf, g, managed_new_list, dir_working, dry_run=dry_run)
+        renderer.render_group(conf, g, managed_old_list, managed_new_list, dir_working, dry_run=dry_run)
 
     managed_deleted_list = list(set(managed_old_list) - set(managed_new_list))
     if len(managed_deleted_list) > 0:

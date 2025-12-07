@@ -7,11 +7,19 @@ import os
 import conf_reader
 import processing
 
+class FileExistsUnmanagedError(Exception):
+    def __init__(self, file_path):
+        self.file_path = file_path
+
+    def __str__(self):
+        return f"File {self.file_path} is the new configuration artifact, but it already exists on the filesystem"
+
 def render_file(
         in_file_path: pathlib.Path,
         path_working: pathlib.Path,
         conf: conf_reader.Conf,
         group: conf_reader.Group,
+        managed_old_list: typing.List[str],
         managed_new_list: typing.List[str],
         use_symlinks: bool,
         dry_run: bool):
@@ -20,6 +28,8 @@ def render_file(
         processing.process_dict[group.process](in_file_path, path_working, conf)
 
     symlink_path = group.out_path / in_file_path.relative_to(group.in_path)
+    if str(symlink_path) not in managed_old_list and symlink_path.exists():
+        raise FileExistsUnmanagedError(str(symlink_path))
     if not dry_run:
         symlink_path.parent.mkdir(parents=True, exist_ok=True)
         symlink_path.unlink(missing_ok=True)
@@ -36,6 +46,7 @@ def render_file(
 def render_group(
         conf: conf_reader.Conf,
         group: conf_reader.Group,
+        managed_old_list: typing.List[str],
         managed_new_list: typing.List[str],
         dir_working: pathlib.Path,
         use_symlinks=True,
@@ -47,9 +58,9 @@ def render_group(
         for (dir_path, dirs, files) in in_path_obj.walk(follow_symlinks=True):
             for fn in files:
                 path_working = dir_working_group / f"{fn}_{random.randint(0, 9999) :0>4}"
-                render_file(dir_path / fn, path_working, conf, group, managed_new_list, use_symlinks, dry_run)
+                render_file(dir_path / fn, path_working, conf, group, managed_old_list, managed_new_list, use_symlinks, dry_run)
     elif in_path_obj.is_file():
         path_working = dir_working_group / f"{in_path_obj.name}_{random.randint(0, 9999) :0>4}"
-        render_file(in_path_obj, path_working, conf, group, managed_new_list, use_symlinks, dry_run)
+        render_file(in_path_obj, path_working, conf, group, managed_old_list, managed_new_list, use_symlinks, dry_run)
     else:
         print(f"Warning: path {in_path_obj} does not exist")
