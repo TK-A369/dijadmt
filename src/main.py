@@ -10,8 +10,24 @@ import managed_files
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('root', action='store', nargs=1, help="the root TOML configuration file")
-    parser.add_argument('--dry-run', '-d', action='store_true', help="don't perform any actual operations on the filesystem")
+    parser.add_argument(
+        'root',
+        action='store',
+        nargs=1,
+        help="the root TOML configuration file")
+    parser.add_argument(
+        '--dry-run',
+        '-d',
+        action='store_true',
+        help="don't perform any actual operations on the filesystem")
+    parser.add_argument(
+        '--def',
+        '-f',
+        nargs=2,
+        metavar=('name', 'val'),
+        dest='defs',
+        action='append',
+        help="define a variable")
     parse_result = parser.parse_args()
     # parser.print_help()
     # print(parse_result)
@@ -21,6 +37,9 @@ def main():
     print(f"{dry_run=}")
     conf = conf_reader.Conf.read(conf_root_path)
     # print(conf)
+
+    for (name, val) in (parse_result.defs or []):
+        conf.defs[name] = val
 
     managed_old_list = managed_files.read_managed_files(conf_root_path)
 
