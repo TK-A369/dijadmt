@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchilng"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
@@ -10,4 +10,10 @@ requires-python = ">=3.7"
 dynamic = ["version"]
 
 [project.scripts]
-dijadmt = "main:main"
+dijadmt = "dijadmt.main:main"
+
+[tool.hatch.version]
+path = "src/dijadmt/main.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dijadmt"]

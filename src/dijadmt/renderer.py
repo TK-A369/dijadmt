@@ -4,8 +4,8 @@ import random
 import shutil
 import os
 
-import conf_reader
-import processing
+from . import conf_reader
+from . import processing
 
 class FileExistsUnmanagedError(Exception):
     def __init__(self, file_path):

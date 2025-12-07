@@ -4,7 +4,7 @@ import shutil
 import re
 import os
 
-import conf_reader
+from . import conf_reader
 
 # See: https://stackoverflow.com/a/10296112
 def raiser(ex):

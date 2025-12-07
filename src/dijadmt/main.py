@@ -4,9 +4,11 @@ import argparse
 import pathlib
 import os
 
-import conf_reader
-import renderer
-import managed_files
+from . import conf_reader
+from . import renderer
+from . import managed_files
+
+__version__ = '0.1.0'
 
 def main():
     parser = argparse.ArgumentParser()
