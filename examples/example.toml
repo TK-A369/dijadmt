@@ -1,6 +1,8 @@
-enable = ["nvim", "nano", "waybar"]
+enable = ["nvim", "nano", "quickshell"]
 
 subconfs = ["nano.toml"]
+
+defs = { quickshell_dir_name = "slowshell" }
 
 [groups.nvim]
 in_path = "neovim"
@@ -17,5 +19,5 @@ requires = ["sway"]
 
 [groups.quickshell]
 in_path = "quickshell"
-out_path = "/tmp/.config/quickshell"
+out_path = "/tmp/.config/${quickshell_dir_name}"
 conflicts = ["waybar"]
