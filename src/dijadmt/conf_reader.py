@@ -5,6 +5,17 @@ import typing
 import collections
 import re
 
+# See: https://stackoverflow.com/a/10296112
+def raiser(ex):
+    raise ex
+
+class VariableUndefinedError(Exception):
+    def __init__(self, var_name):
+        self.var_name = var_name
+
+    def __str__(self):
+        return f"Variable {self.var_name} is undefined"
+
 class ConflictingGroupsError(Exception):
     def __init__(self, g1, g2):
         self.g1 = g1
@@ -14,7 +25,7 @@ class ConflictingGroupsError(Exception):
         return f"Group {self.g1} is conflicting with {self.g2}"
 
 def resolve_defs(s: str, get_def_fn: collections.abc.Callable[[str], str]) -> str:
-    return re.sub(r'\${([a-zA-Z0-9_]+)}', lambda m: get_def_fn(m.group(1)), s)
+    return re.sub(r'\${([a-zA-Z0-9_]+)}', lambda m: get_def_fn(m.group(1)) or raiser(VariableUndefinedError(m.group(1))), s)
 
 @dataclasses.dataclass(init=False)
 class Group:
