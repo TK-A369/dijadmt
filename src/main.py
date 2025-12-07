@@ -24,7 +24,7 @@ def main():
     dir_working = pathlib.Path("./working").resolve()
     for gn in enabled_groups:
         g = conf.get_group(gn)
-        renderer.render_group(g, dir_working)
+        renderer.render_group(conf, g, dir_working)
 
 if __name__ == "__main__":
     main()
