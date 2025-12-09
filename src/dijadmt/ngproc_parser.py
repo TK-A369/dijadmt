@@ -67,13 +67,14 @@ def parse_dlrexpr(s: str) -> typing.Tuple[DlrExpr, int]:
     # while s[idx].isalnum() or s[idx] in ['_']:
     #     func_name += s[idx]
     #     idx += 1
-    return parsing_helper_seq(s, [
+    result = parsing_helper_seq(s, [
         lambda s: parse_const_char(s, '$'),
         parse_func_name,
         lambda s: parsing_helper_repeat(s, lambda s: parsing_helper_seq(s, [
             lambda s: parse_braces(s, True),
             lambda s: parsing_helper_repeat(s, parse_expr),
             lambda s: parse_braces(s, False)]))])
+    return (DlrExpr(result[0][1], [x[1] for x in result[0][2]]), result[1])
 
 def parse_const_char(s: str, ch: str) -> typing.Tuple[str, int]:
     if s[0] == ch:
