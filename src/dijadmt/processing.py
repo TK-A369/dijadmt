@@ -5,6 +5,7 @@ import re
 import os
 
 from . import conf_reader
+from . import ngproc_parser
 
 def process_none(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
     # path_in.copy(path_working)
@@ -28,7 +29,14 @@ def process_defsubs(path_in: pathlib.Path, path_working: pathlib.Path, conf: con
             s_subs)
         f_working.write(s_subs)
 
+# New Generation Processor
+def process_ngproc(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
+    with path_in.open('r') as f_in:
+        ngproc_ast = ngproc_parser.parse(f_in.read())
+        print(f'{ngproc_ast=}')
+
 process_dict = {
     'none': process_none,
-    'defsubs': process_defsubs
+    'defsubs': process_defsubs,
+    'ngproc': process_ngproc
 }

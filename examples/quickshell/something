@@ -1,5 +1,5 @@
-prop_a = $dijadmt_def{quickshell_prop_a}
-$dijadmt_if{quickshell_enable_b}{true}{
+prop_a = $dijadmt_def{{quickshell_prop_a}}
+$dijadmt_if{{quickshell_enable_b}}{{true}}{{
 prop_b = true
 prop_c = 9876
-}
+}}
