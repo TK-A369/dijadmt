@@ -29,11 +29,38 @@ def process_defsubs(path_in: pathlib.Path, path_working: pathlib.Path, conf: con
             s_subs)
         f_working.write(s_subs)
 
+class NgProcEvalError(Exception):
+    pass
+
 # New Generation Processor
 def process_ngproc(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
+    def ast_eval(ast_node):
+        if isinstance(ast_node, list):
+            return ''.join(map(ast_eval, ast_node))
+        elif isinstance(ast_node, str):
+            return ast_node
+        elif isinstance(ast_node, ngproc_parser.DlrExpr):
+            func_name = ast_node.func_name
+            if func_name == 'dijadmt_def':
+                return conf.get_def(ast_eval(ast_node.args[0]))
+            elif func_name == 'dijadmt_if':
+                var_name = ast_eval(ast_node.args[0])
+                value_true = ast_eval(ast_node.args[1])
+                content = ast_eval(ast_node.args[2])
+                if conf.get_def(var_name) == value_true:
+                    return content
+                else:
+                    return ''
+            else:
+                raise NgProcEvalError(f'Unrecognized NgProc function {func_name}')
+        else:
+            raise NgProcEvalError(f'Unrecognized AST node type {type(ast_node)}')
     with path_in.open('r') as f_in:
         ngproc_ast = ngproc_parser.parse(f_in.read())
         print(f'{ngproc_ast=}')
+    processor_result = ast_eval(ngproc_ast)
+    with path_working.open('w') as f_working:
+        f_working.write(processor_result)
 
 process_dict = {
     'none': process_none,

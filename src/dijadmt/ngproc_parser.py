@@ -48,7 +48,10 @@ def parse(s):
     # while idx < len(s):
     #     curr_result = parse_expr(s)
     #     idx += curr_result[1]
-    return parsing_helper_repeat(s, parse_expr)
+    result = parsing_helper_repeat(s, parse_expr)
+    if result[1] != len(s):
+        raise NgProcParsingError(f'The parser didn\'t read the entire code')
+    return result[0]
 
 def parse_expr(s) -> typing.Tuple[typing.Union[DlrExpr, str], int]:
     # if s[0] == '$':
