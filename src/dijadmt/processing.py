@@ -73,7 +73,8 @@ def process_ngproc(
     with path_in.open('r') as f_in:
         ngproc_parser.debug_ngproc = common_options.debug_ngproc
         ngproc_ast = ngproc_parser.parse(f_in.read())
-        print(f'{ngproc_ast=}')
+        if common_options.debug_ngproc:
+            print(f'{ngproc_ast=}')
     processor_result = ast_eval(ngproc_ast)
     with path_working.open('w') as f_working:
         f_working.write(processor_result)
