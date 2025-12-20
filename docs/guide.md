@@ -33,3 +33,26 @@ The following substitutions will be performed:
 - `$dijadmt_def{var}` - expands to the value of given variable; will raise an error if the variable is undefined
 - `$dijadmt_if{var}{value}{content}` - if given variable is equal to given variable, then expand to the content; otherwise expand to empty string
 - `$dijadmt_escape{c}` - expand to given single character
+
+### `ngproc`
+
+The New Generation Processor is more advanced successor to `defsubs`. While `defsubs` simply used regular expressions to find expressions to evaluate, `ngproc` has a dedicated parser that constructs an AST which is then evaluated.
+
+The syntax was initially intended to be an extension on the one of `defsubs`, but now it isn't compatible with it. The entire document is a series of expressions. An expression can a dollar expression, an escape sequence, a normal character or a brace enclosed expression.
+
+A dollar expression begins with a dollar sign `$` followed by a function name (that must begin with `dijadmt_` - it is enforced at the parser level) and any number of arguments. Each argument is enclosed in double braces (`{{` and `}}`), and its content is any number of expressions.
+
+An escape sequence can be one of the following: `\{` (gives `{`), `\}` (gives `}`) and `\$` (gives `$`).
+
+A normal character can be anything besides braces (`{` and `}`).
+
+A brace enclosed expression is enclosed by single braces (`{` and `}`) and its content is any number of expressions. The braces must be properly paired.
+
+Escape sequences evaluate to the corresponding character. Normal characters evaluate to themselves. Brace enclosed expressions retain the braces and evaluate the content.
+
+There are the following dollar expression functions:
+
+- `$dijadmt_def{{var}}` - returns the value of given variable
+- `$dijadmt_if{{var}}{{value}}{{content}} - reads given variable and if it is equal to value, then return content; otherwise return empty string
+
+It is important to note that the parser uses backtracking - if one matching one rule failed when a few alternatives are possible, others will be tried, according to their order. Also, the normal char may be a dollar sign. The consequence of those two is that you are allowed to use dollar sign in your configuration files and if it doesn't match the dollar expression syntax rules, it will be passed literally - so you can use Bourne shell-style variables without escaping the dollar sign. You can also write JSON without much trouble, by using brace enclosed expressions.
