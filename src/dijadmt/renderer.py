@@ -24,8 +24,7 @@ def render_file(
         use_symlinks: bool,
         dry_run: bool):
     print(f"Running processor {group.process} on {in_file_path} into {path_working}")
-    if not dry_run:
-        processing.process_dict[group.process](in_file_path, path_working, conf)
+    processing.process_dict[group.process](in_file_path, path_working, conf)
 
     symlink_path = group.out_path / in_file_path.relative_to(group.in_path)
     if str(symlink_path) not in managed_old_list and symlink_path.exists():
