@@ -6,13 +6,24 @@ import os
 
 from . import conf_reader
 from . import ngproc_parser
+from . import cli_parsing
 
-def process_none(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
-    # path_in.copy(path_working)
-    # shutil.copy(path_in, path_working)
-    os.symlink(path_in, path_working)
+def process_none(
+        path_in: pathlib.Path,
+        path_working: pathlib.Path,
+        conf: conf_reader.Conf,
+        common_options: cli_parsing.CliCommonOptions):
+    if common_options.use_symlinks:
+        os.symlink(path_in, path_working)
+    else:
+        # path_in.copy(path_working)
+        shutil.copy(path_in, path_working)
 
-def process_defsubs(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
+def process_defsubs(
+        path_in: pathlib.Path,
+        path_working: pathlib.Path,
+        conf: conf_reader.Conf,
+        common_options: cli_parsing.CliCommonOptions):
     with path_in.open('r') as f_in, path_working.open('w') as f_working:
         s_in = f_in.read()
         s_subs = re.sub(
@@ -33,7 +44,11 @@ class NgProcEvalError(Exception):
     pass
 
 # New Generation Processor
-def process_ngproc(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf_reader.Conf):
+def process_ngproc(
+        path_in: pathlib.Path,
+        path_working: pathlib.Path,
+        conf: conf_reader.Conf,
+        common_options: cli_parsing.CliCommonOptions):
     def ast_eval(ast_node):
         if isinstance(ast_node, list):
             return ''.join(map(ast_eval, ast_node))
@@ -56,6 +71,7 @@ def process_ngproc(path_in: pathlib.Path, path_working: pathlib.Path, conf: conf
         else:
             raise NgProcEvalError(f'Unrecognized AST node type {type(ast_node)}')
     with path_in.open('r') as f_in:
+        ngproc_parser.debug_ngproc = common_options.debug_ngproc
         ngproc_ast = ngproc_parser.parse(f_in.read())
         print(f'{ngproc_ast=}')
     processor_result = ast_eval(ngproc_ast)

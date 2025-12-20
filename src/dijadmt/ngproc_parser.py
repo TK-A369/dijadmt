@@ -1,6 +1,8 @@
 import typing
 import dataclasses
 
+from . import cli_parsing
+
 @dataclasses.dataclass
 class DlrExpr:
     func_name: str
@@ -8,6 +10,9 @@ class DlrExpr:
 
 class NgProcParsingError(Exception):
     pass
+
+# Not the most beautiful way to pass this
+debug_ngproc = False
 
 def parsing_helper_any(s: str, subparsers: typing.List[typing.Callable[[str], typing.Tuple[typing.Any, int]]]) -> typing.Tuple[typing.Any, int]:
     exceptions = []
@@ -17,7 +22,8 @@ def parsing_helper_any(s: str, subparsers: typing.List[typing.Callable[[str], ty
             return result
         except Exception as e:
             exceptions.append(e)
-            print(f'Exception in one of the options: {e}')
+            if debug_ngproc:
+                print(f'Exception in one of the options: {e}')
     raise NgProcParsingError(f'Unexpected `{s[0]}` - all subparsers failed: {", ".join(exceptions)}')
 
 def parsing_helper_seq(s: str, seq_parsers: typing.List[typing.Callable[[str], typing.Tuple[typing.Any, int]]]) -> typing.Tuple[typing.List[typing.Any], int]:
@@ -40,7 +46,8 @@ def parsing_helper_repeat(s: str, subparser: typing.Callable[[str], typing.Tuple
             idx += curr_result[1]
         except Exception as e:
             raised_exc = True
-            print(f'Exception in repeated element: {e}')
+            if debug_ngproc:
+                print(f'Exception in repeated element: {e}')
     return (result_list, idx)
 
 def parse(s):
