@@ -57,7 +57,7 @@ def process_ngproc(
         elif isinstance(ast_node, ngproc_parser.DlrExpr):
             func_name = ast_node.func_name
             if func_name == 'dijadmt_def':
-                return conf.get_def(ast_eval(ast_node.args[0]))
+                return v if (v := conf.get_def(var_name := ast_eval(ast_node.args[0]))) is not None else conf_reader.raiser(conf_reader.VariableUndefinedError(var_name))
             elif func_name == 'dijadmt_if':
                 var_name = ast_eval(ast_node.args[0])
                 value_true = ast_eval(ast_node.args[1])

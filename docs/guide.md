@@ -52,7 +52,7 @@ Escape sequences evaluate to the corresponding character. Normal characters eval
 
 There are the following dollar expression functions:
 
-- `$dijadmt_def{{var}}` - returns the value of given variable
+- `$dijadmt_def{{var}}` - returns the value of given variable; will raise an error if the variable is undefined
 - `$dijadmt_if{{var}}{{value}}{{content}} - reads given variable and if it is equal to value, then return content; otherwise return empty string
 
 It is important to note that the parser uses backtracking - if one matching one rule failed when a few alternatives are possible, others will be tried, according to their order. Also, the normal char may be a dollar sign. The consequence of those two is that you are allowed to use dollar sign in your configuration files and if it doesn't match the dollar expression syntax rules, it will be passed literally - so you can use Bourne shell-style variables without escaping the dollar sign. You can also write JSON without much trouble, by using brace enclosed expressions.
