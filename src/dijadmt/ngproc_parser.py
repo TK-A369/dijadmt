@@ -57,7 +57,7 @@ def parse(s):
     #     idx += curr_result[1]
     result = parsing_helper_repeat(s, parse_expr)
     if result[1] != len(s):
-        raise NgProcParsingError(f'The parser didn\'t read the entire code')
+        raise NgProcParsingError(f'The parser didn\'t read the entire code (only {result[1]} characters)')
     return result[0]
 
 def parse_expr(s) -> typing.Tuple[typing.Union[DlrExpr, str], int]:
@@ -67,7 +67,11 @@ def parse_expr(s) -> typing.Tuple[typing.Union[DlrExpr, str], int]:
     #     return parse_escape_seq(s)
     # else:
     #     return (s[0], 1)
-    return parsing_helper_any(s, [parse_dlrexpr, parse_escape_seq, parse_char])
+    return parsing_helper_any(s, [
+        parse_dlrexpr,
+        parse_escape_seq,
+        parse_char,
+        parse_brace_enclosed_expr])
 
 def parse_dlrexpr(s: str) -> typing.Tuple[DlrExpr, int]:
     # if s[0] != '$':
@@ -84,6 +88,9 @@ def parse_dlrexpr(s: str) -> typing.Tuple[DlrExpr, int]:
             lambda s: parse_braces(s, True),
             lambda s: parsing_helper_repeat(s, parse_expr),
             lambda s: parse_braces(s, False)]))])
+    func_name = result[0][1]
+    if 'dijadmt_' not in func_name:
+        raise NgProcParsingError(f'Dollar expression function name doesn\'t start with \"dijadmt_\": \"{func_name}\"')
     return (DlrExpr(result[0][1], [x[1] for x in result[0][2]]), result[1])
 
 def parse_const_char(s: str, ch: str) -> typing.Tuple[str, int]:
@@ -108,7 +115,7 @@ def parse_braces(s, left) -> typing.Tuple[str, int]:
         raise NgProcParsingError(f'Expected `{braces[0]}`, got `{s[0]}`')
 
 def parse_char(s) -> typing.Tuple[str, int]:
-    if s[0] in ['{', '}', '$']:
+    if s[0] in ['{', '}']:
         raise NgProcParsingError(f'Got unexpected special character `{s[0]}`')
     return (s[0], 1)
 
@@ -124,3 +131,10 @@ def parse_escape_seq(s: str) -> typing.Tuple[str, int]:
         escaped = '$'
 
     return (result[0][1], escaped)
+
+def parse_brace_enclosed_expr(s: str) -> typing.Tuple[list, int]:
+    result = parsing_helper_seq(s, [
+        lambda s: parse_const_char(s, '{'),
+        lambda s: parsing_helper_repeat(s, parse_expr),
+        lambda s: parse_const_char(s, '}')])
+    return ([result[0][0]] + result[0][1] + [result[0][2]], result[1])
